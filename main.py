@@ -23,11 +23,76 @@ os.makedirs(IMAGES_DIR, exist_ok=True)
 os.makedirs(RENDER_DIR, exist_ok=True)
 
 # Simple SW color mapping for demo (extend as needed)
-SW_COLORS = {
-    "sw-7008": "#EDE6D9",  # Alabaster
-    "sw-7019": "#544D46",  # Gauntlet Gray (approx)
-    "sw-6108": "#D0BA9B",  # Latte (approx)
-}
+# --------- SHERWIN-WILLIAMS COLOR TABLE ----------
+
+SW_COLOR_TABLE = [
+    # Whites / Off-Whites
+    {"id": "sw-7008", "code": "SW 7008", "name": "Alabaster",        "hex": "#EDE6D9", "family": "warm white"},
+    {"id": "sw-7004", "code": "SW 7004", "name": "Snowbound",       "hex": "#ECEBE7", "family": "cool white"},
+    {"id": "sw-7005", "code": "SW 7005", "name": "Pure White",      "hex": "#F4F4F0", "family": "neutral white"},
+    {"id": "sw-7006", "code": "SW 7006", "name": "Extra White",     "hex": "#F3F5F6", "family": "cool white"},
+    {"id": "sw-7042", "code": "SW 7042", "name": "Shoji White",     "hex": "#E2DED2", "family": "warm white"},
+    {"id": "sw-7551", "code": "SW 7551", "name": "Greek Villa",     "hex": "#EFE6D8", "family": "warm white"},
+
+    # Beiges / Greiges
+    {"id": "sw-7036", "code": "SW 7036", "name": "Accessible Beige","hex": "#C9B8A4", "family": "greige"},
+    {"id": "sw-6108", "code": "SW 6108", "name": "Latte",           "hex": "#D0BA9B", "family": "beige"},
+    {"id": "sw-7030", "code": "SW 7030", "name": "Anew Gray",       "hex": "#B7ADA1", "family": "greige"},
+    {"id": "sw-7029", "code": "SW 7029", "name": "Agreeable Gray",  "hex": "#D1CBC1", "family": "greige"},
+
+    # Grays
+    {"id": "sw-7015", "code": "SW 7015", "name": "Repose Gray",     "hex": "#C0B7AE", "family": "warm gray"},
+    {"id": "sw-7016", "code": "SW 7016", "name": "Mindful Gray",    "hex": "#B0AAA0", "family": "warm gray"},
+    {"id": "sw-7019", "code": "SW 7019", "name": "Gauntlet Gray",   "hex": "#625A54", "family": "dark gray"},
+    {"id": "sw-7024", "code": "SW 7024", "name": "Dovetail",        "hex": "#8B7D70", "family": "medium gray"},
+    {"id": "sw-7674", "code": "SW 7674", "name": "Peppercorn",      "hex": "#4A4B4D", "family": "charcoal"},
+
+    # Darks / Accents
+    {"id": "sw-6258", "code": "SW 6258", "name": "Tricorn Black",   "hex": "#2D2C2F", "family": "black"},
+    {"id": "sw-7069", "code": "SW 7069", "name": "Iron Ore",        "hex": "#434447", "family": "charcoal"},
+    {"id": "sw-7048", "code": "SW 7048", "name": "Urbane Bronze",   "hex": "#60544D", "family": "brown-gray"},
+
+    # Blues / Greens (nice for doors, accents)
+    {"id": "sw-6244", "code": "SW 6244", "name": "Naval",           "hex": "#303B4A", "family": "navy blue"},
+    {"id": "sw-6204", "code": "SW 6204", "name": "Sea Salt",        "hex": "#CBD4CC", "family": "blue-green"},
+    {"id": "sw-6211", "code": "SW 6211", "name": "Rainwashed",      "hex": "#C2D4CC", "family": "blue-green"},
+]
+
+# Lookup dictionaries
+SW_BY_ID = {c["id"].lower(): c for c in SW_COLOR_TABLE}
+SW_BY_CODE = {c["code"].lower(): c for c in SW_COLOR_TABLE}
+SW_BY_NAME = {c["name"].strip().lower(): c for c in SW_COLOR_TABLE}
+
+def resolve_sw_color(color_key: str) -> str:
+    """
+    Accepts:
+      - 'sw-7008'
+      - 'SW 7008'
+      - 'Alabaster'
+    Returns:
+      - hex color string like '#EDE6D9'
+    """
+    if not color_key:
+        return "#CCCCCC"
+
+    ck = color_key.strip().lower()
+
+    # Try internal ID form, e.g. 'sw-7008'
+    if ck in SW_BY_ID:
+        return SW_BY_ID[ck]["hex"]
+
+    # Try code form, e.g. 'sw 7008' or 'SW 7008'
+    # Normalize spaces/dash
+    ck_normalized = ck.replace("-", " ")
+    if ck_normalized in SW_BY_CODE:
+        return SW_BY_CODE[ck_normalized]["hex"]
+
+    # Try name form, e.g. 'alabaster'
+    if ck in SW_BY_NAME:
+        return SW_BY_NAME[ck]["hex"]
+
+    # Fallback if unknown – neutral gray
+    return "#CCCCCC"
 
 app = FastAPI(title="Color Rendering Demo API")
 
