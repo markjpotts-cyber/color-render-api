@@ -1,3 +1,5 @@
+from fastapi.middleware.cors 
+import CORSMiddleware
 import os
 import uuid
 from typing import List, Optional
@@ -30,6 +32,18 @@ SW_COLORS = {
 
 app = FastAPI(title="Color Rendering Demo API")
 
+origins = [
+    "https://rendering.certapropaintersofmissouricity.com",
+    "http://localhost:8000",  # optional for local tests
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # ---------- Auth dependency ----------
 
