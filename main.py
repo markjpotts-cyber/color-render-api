@@ -268,3 +268,22 @@ def list_colors(q: str | None = None):
             or ql in c["id"].lower()
         ]
     return items
+
+@app.get("/colors")
+def list_colors(q: str | None = None):
+    """
+    Simple Sherwin-Williams color search:
+    - GET /colors          → returns full color table
+    - GET /colors?q=white  → filters by name, code, family, or id
+    """
+    items = SW_COLOR_TABLE
+    if q:
+        ql = q.strip().lower()
+        items = [
+            c for c in items
+            if ql in c["name"].lower()
+            or ql in c["code"].lower()
+            or ql in c["family"].lower()
+            or ql in c["id"].lower()
+        ]
+    return items
