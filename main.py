@@ -217,11 +217,9 @@ def create_rendering(
         raise HTTPException(status_code=400, detail="At least one region is required")
 
     # Use the first region's color_id for demo
-    color_id = req.regions[0].color_id.lower()
-    hex_color = SW_COLORS.get(color_id)
-    if not hex_color:
-        # Default to a neutral if unknown
-        hex_color = "#CCCCCC"
+       color_key = req.regions[0].color_id
+    hex_color = resolve_sw_color(color_key)
+
 
     job_id = str(uuid.uuid4())
     ext = ".jpg" if req.output_format.lower() == "jpg" else ".png"
