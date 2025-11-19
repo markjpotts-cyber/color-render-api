@@ -249,3 +249,22 @@ def get_rendering(job_id: str, api_key: str = Depends(get_api_key)):
     if not job:
         raise HTTPException(status_code=404, detail="Job not found")
     return job
+
+@app.get("/colors")
+def list_colors(q: str | None = None):
+    """
+    Simple Sherwin-Williams color search:
+    - GET /colors          → returns full color table
+    - GET /colors?q=white  → filters by name, code, or family
+    """
+    items = SW_COLOR_TABLE
+    if q:
+        ql = q.strip().lower()
+        items = [
+            c for c in items
+            if ql in c["name"].lower()
+            or ql in c["code"].lower()
+            or ql in c["family"].lower()
+            or ql in c["id"].lower()
+        ]
+    return items
