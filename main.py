@@ -1,8 +1,7 @@
-from fastapi.middleware.cors 
-import CORSMiddleware
 import os
 import uuid
 from typing import List, Optional
+from fastapi.middleware.cors import CORSMiddleware
 
 from fastapi import FastAPI, UploadFile, File, HTTPException, Header, Depends
 from fastapi.responses import FileResponse
